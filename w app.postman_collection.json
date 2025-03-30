@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "a569342f-0cd3-42f4-803c-a829ae12c56f",
+		"name": "w app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40788689"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"sara\",\r\n  \"password\": \"1\",\r\n  \"role\": \"user\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"username\": \"sara\",\r\n  \"password\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJsdWJuYSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQyNTkwNzE4LCJleHAiOjE3NDI1OTQzMTh9.EWFdL7PoVGJEM_77PAFncHkuJW4FgwYln76jY-HI84Q",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fav city",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidXNlcm5hbWUiOiJzYXJhIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDI1OTQwNDIsImV4cCI6MTc0MjU5NzY0Mn0.9P811bXCbT8AW4dBTZvMr-BC1ZjppmahBB7x5JrIr2I",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"city\": \"zarqa\",\r\n    \"Country\": \"Jordan\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/create-favorite-city",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"create-favorite-city"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fav city",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidXNlcm5hbWUiOiJzYXJhIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDI1OTQwNDIsImV4cCI6MTc0MjU5NzY0Mn0.9P811bXCbT8AW4dBTZvMr-BC1ZjppmahBB7x5JrIr2I",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/get-favorite-cities",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"get-favorite-cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fav city by id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJsdWJuYSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQyNTkwNzE4LCJleHAiOjE3NDI1OTQzMTh9.EWFdL7PoVGJEM_77PAFncHkuJW4FgwYln76jY-HI84Q",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/get-favorite-city-by-id/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"get-favorite-city-by-id",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update city",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidXNlcm5hbWUiOiJzYXJhIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDI1OTQwNDIsImV4cCI6MTc0MjU5NzY0Mn0.9P811bXCbT8AW4dBTZvMr-BC1ZjppmahBB7x5JrIr2I",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"city\": \"irbid\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/update-favorites-cities/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"update-favorites-cities",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete city",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwidXNlcm5hbWUiOiJsdWJuYSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQyNTkwNzE4LCJleHAiOjE3NDI1OTQzMTh9.EWFdL7PoVGJEM_77PAFncHkuJW4FgwYln76jY-HI84Q",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/favorites/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"favorites",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

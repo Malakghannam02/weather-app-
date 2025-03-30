@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div id="auth-buttons">
+        <a href="login.html"><button id="login-btn">Login</button></a> 
+        <a href="register.html"><button id="signup-btn">Register</button></a>
+    </div>
+
+    <div id="weather-container">
+        <h2>Weather App</h2>
+        
+        <div id="search-box">
+            <input type="text" id="city-input" placeholder="Enter city">
+            <span id="fav-icon" class="fav-icon" onclick="saveFavoriteCity()" title="Save to Favorites">⭐</span>
+        </div>
+
+        <button onclick="getWeather()">Search</button>
+
+        <div id="weather-info">
+            <p id="temperature"></p>
+            <p id="description"></p>
+            <p id="humidity"></p>
+            <p id="wind-speed"></p>
+        </div>
+
+        <div id="favorites-list"></div>
+    </div>
+
+    <script src="./index.js"></script>
+</body>
+</html>

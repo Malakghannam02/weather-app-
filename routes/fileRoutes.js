@@ -1,12 +1,12 @@
 // fileRoutes.js
-
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const connection = require("../db");
 const cookieparser = require("cookie-parser");
 const { v4: uuidv4 } = require("uuid");
-require('dotenv').config();
+require("dotenv").config();
+
 const router = express.Router();
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -40,34 +40,53 @@ const verifyToken = (req, res, next) => {
     });
 };
 
-// Register Method.
+const isValidPassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    return regex.test(password);
+};
+
+// Register Method
 router.post("/register", async (req, res) => {
-    const { username, password, role } = req.body;
-    if (!username || !password || !role) {
-        return res.status(400).json({ message: "Sorry please enter all fields" });
+    const { username, email, password, role } = req.body;
+
+    if (!username || !email || !password || !role) {
+        return res.status(400).json({ message: "Please fill all fields" });
     }
+
     if (role !== "admin" && role !== "user") {
         return res.status(400).json({ message: "Invalid role. Must be 'admin' or 'user'" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const userId = uuidv4();
-    
-    connection.query("SELECT * FROM users WHERE username = ?", [username], (err, results) => {
-        if (err) return res.status(500).json({ message: "Database error" });
-        if (results.length > 0) return res.status(400).json({ message: "Username already taken" });
-        
-        connection.query("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", [username, hashedPassword, role], (err, results) => {
-            if (err) return res.status(500).json({ message: "Error saving user" });
-            res.status(201).json({ message: "User registered successfully" });
+    if (!isValidPassword(password)) {
+        return res.status(400).json({
+            message: "Password must be at least 8 characters long, include uppercase, lowercase, number, and special character.",
         });
+    }
+
+    connection.query("SELECT * FROM users WHERE username = ? OR email = ?", [username, email], async (err, results) => {
+        if (err) return res.status(500).json({ message: "Database error" });
+        if (results.length > 0) return res.status(400).json({ message: "Username or email already taken" });
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        connection.query("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)",
+            [username, email, hashedPassword, role],
+            (err) => {
+                if (err) return res.status(500).json({ message: "Error saving user" });
+                res.status(201).json({ message: "User registered successfully" });
+            }
+        );
     });
 });
 
-// login Method.
+// Login Method
 router.post("/login", async (req, res) => {
-    const { username, password } = req.body;
-    connection.query("SELECT * FROM users WHERE username = ?", [username], async (err, results) => {
+    const { identifier, password } = req.body; // identifier can be username or email
+
+    if (!identifier || !password) {
+        return res.status(400).json({ message: "Please provide username/email and password" });
+    }
+
+    connection.query("SELECT * FROM users WHERE username = ? OR email = ?", [identifier, identifier], async (err, results) => {
         if (err) return res.status(500).json({ message: "Database error" });
         if (results.length === 0) return res.status(401).json({ message: "Invalid credentials" });
 
@@ -75,64 +94,29 @@ router.post("/login", async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
-        const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, process.env.SECRET_KEY, { expiresIn: "1h" });
+        const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, SECRET_KEY, { expiresIn: "1h" });
 
-        connection.query("INSERT INTO tokens (user_id, token) VALUES (?, ?)", [user.id, token], (err, results) => {
-            if (err) {
-                return res.status(500).json({ message: "Error saving token" });
-            }
-            res.json({ message: "Login successful", token: token});
+        connection.query("INSERT INTO tokens (user_id, token) VALUES (?, ?)", [user.id, token], (err) => {
+            if (err) return res.status(500).json({ message: "Error saving token" });
+            res.json({ message: "Login successful", token });
         });
     });
 });
 
-// Logout Method.
+// Logout Method
 router.post("/logout", verifyToken, (req, res) => {
     const token = req.headers["authorization"].split(" ")[1];
 
-    connection.query(
-        "SELECT * FROM revoked_tokens WHERE token = ?", [token],
-        (err, results) => {
-            if (err) {
-                return res.status(500).json({ message: "Error checking token revocation status", error: err.message });
-            }
-            if (results.length > 0) {
-                return res.status(400).json({ message: "This token has already been revoked." });
-            }
-            connection.query(
-                "INSERT INTO revoked_tokens (token) VALUES (?)", [token],
-                (err, results) => {
-                    if (err) {
-                        return res.status(500).json({ message: "Error revoking token", error: err.message });
-                    }
+    connection.query("SELECT * FROM revoked_tokens WHERE token = ?", [token], (err, results) => {
+        if (err) return res.status(500).json({ message: "Error checking token", error: err.message });
+        if (results.length > 0) return res.status(400).json({ message: "This token has already been revoked." });
 
-            connection.query("DELETE FROM tokens WHERE token = ?", [token], (err, results) => {
-                if (err) {
-                    return res.status(500).json({ message: "Error deleting token from tokens table" });
-                }
-                res.json({ message: "Logged out successfully. Token has been revoked and added to revoked_tokens." });
-            });
-        });
-    });
-});
+        // Insert the token into the revoked_tokens table without deleting it from the tokens table
+        connection.query("INSERT INTO revoked_tokens (token) VALUES (?)", [token], (err) => {
+            if (err) return res.status(500).json({ message: "Error revoking token", error: err.message });
 
-// Delete User.
-router.delete("/delete-user/:id", verifyToken, verifyRole("admin"), (req, res) => {
-    const userIdToDelete = req.params.id;
-
-    connection.query("SELECT * FROM users WHERE id = ?", [userIdToDelete], (err, results) => {
-        if (err) {
-            return res.status(500).json({ message: "Database error" });
-        }
-        if (results.length === 0) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        connection.query("DELETE FROM users WHERE id = ?", [userIdToDelete], (err, results) => {
-            if (err) {
-                return res.status(500).json({ message: "Error deleting user" });
-            }
-            res.json({ message: "User deleted successfully!" });
+            // Just respond with success message, without deleting the token
+            res.json({ message: "Logged out successfully." });
         });
     });
 });
@@ -171,7 +155,6 @@ router.post("/create-favorite-city", verifyToken, verifyRole("user"), async (req
     );
 });
 
-
 // get favorite cities.
 router.get("/get-favorite-cities", verifyToken, verifyRole("user"),(req, res) => {
     const user_Id = req.user.id;
@@ -205,7 +188,6 @@ router.get("/get-favorite-city-by-id/:id", verifyToken, verifyRole("user"), (req
     );
 });
   
-
 // update favorite city.
 router.put("/update-favorites-cities/:id", verifyToken, verifyRole("user"),(req, res) => {
     const user_Id = req.user.id;

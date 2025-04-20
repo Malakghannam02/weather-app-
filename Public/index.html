@@ -7,9 +7,14 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <div id="auth-buttons">
-        <a href="login.html"><button id="login-btn">Login</button></a> 
-        <a href="register.html"><button id="signup-btn">Register</button></a>
+    <div class="navbar">
+        <div class="logo">Weather App</div>
+        <div id="auth-buttons">
+            <a href="login.html"><button id="login-btn">Login</button></a> 
+            <a href="register.html"><button id="signup-btn">Register</button></a>
+            <a href="favorites.html"><button id="favorite-btn">Favorite Cities</button></a>
+            <button id="logout-btn" style="display:none;" onclick="logout()">Logout</button>
+        </div>
     </div>
 
     <div id="weather-container">

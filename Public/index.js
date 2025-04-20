@@ -74,4 +74,22 @@ async function saveFavoriteCity() {
     }
 }
 
-// window.onload = fetchFavoriteCities;
+// Function to check if the user is logged in
+function checkLoginStatus() {
+    const token = localStorage.getItem("authToken");
+
+    if (token) {
+        document.getElementById("logout-btn").style.display = "inline"; // إظهار زر تسجيل الخروج
+    } else {
+        document.getElementById("logout-btn").style.display = "none"; // إخفاء زر تسجيل الخروج
+    }
+}
+
+// Function to handle logout
+function logout() {
+    localStorage.removeItem("authToken");
+    checkLoginStatus();
+}
+
+window.onload = checkLoginStatus;
+

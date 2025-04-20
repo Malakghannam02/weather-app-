@@ -3,10 +3,10 @@
 document.getElementById("login-form").addEventListener("submit", async function (e) {
     e.preventDefault(); // Prevent default form submission
 
-    const username = document.getElementById("username").value;
+    const identifier = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    const data = { username, password };
+    const data = { identifier, password };
 
     try {
         const response = await fetch("http://localhost:5000/api/login", {

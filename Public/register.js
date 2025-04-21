@@ -1,7 +1,5 @@
-// register.js
-
 document.getElementById("register-form").addEventListener("submit", async function (e) {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
 
     const username = document.getElementById("username").value;
     const email = document.getElementById("email").value;
@@ -23,13 +21,13 @@ document.getElementById("register-form").addEventListener("submit", async functi
 
         if (response.ok) {
             alert("Registration successful! Please log in.");
-            window.location.href = "login.html"; // Redirect to login page
+            window.location.href = "login.html";
         } else {
-            document.getElementById("error-message").textContent = result.message;
+            // عرض رسالة الخطأ القادمة من السيرفر
+            document.getElementById("error-message").textContent = result.message || "Registration failed.";
         }
     } catch (error) {
         console.error("Error during registration:", error);
         document.getElementById("error-message").textContent = "An error occurred. Please try again.";
     }
 });
-

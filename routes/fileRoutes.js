@@ -53,10 +53,7 @@ router.post("/register", async (req, res) => {
         return res.status(400).json({ message: "Please fill all fields" });
     }
 
-    if (role !== "admin" && role !== "user") {
-        return res.status(400).json({ message: "Invalid role. Must be 'admin' or 'user'" });
-    }
-
+   
     if (!isValidPassword(password)) {
         return res.status(400).json({
             message: "Password must be at least 8 characters long, include uppercase, lowercase, number, and special character.",
@@ -115,7 +112,6 @@ router.post("/logout", verifyToken, (req, res) => {
         connection.query("INSERT INTO revoked_tokens (token) VALUES (?)", [token], (err) => {
             if (err) return res.status(500).json({ message: "Error revoking token", error: err.message });
 
-            // Just respond with success message, without deleting the token
             res.json({ message: "Logged out successfully." });
         });
     });

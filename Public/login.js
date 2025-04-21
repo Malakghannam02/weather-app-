@@ -1,7 +1,7 @@
 // login.js
 
 document.getElementById("login-form").addEventListener("submit", async function (e) {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault(); 
 
     const identifier = document.getElementById("username").value;
     const password = document.getElementById("password").value;
@@ -21,10 +21,10 @@ document.getElementById("login-form").addEventListener("submit", async function 
 
         if (response.ok) {
             // Store the token in localStorage
-            localStorage.setItem("authToken", result.token); // Ensure the token is sent in the response
+            localStorage.setItem("authToken", result.token); 
 
-            alert("Login successful!");
-            window.location.href = "index.html"; // Redirect to homepage or dashboard
+            
+            window.location.href = "index.html"; // Redirect to homepage 
         } else {
             document.getElementById("error-message").textContent = result.message;
         }
